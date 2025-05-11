@@ -53,7 +53,7 @@ stage_files() {
   # Setup ZRAM
   download https://raw.githubusercontent.com/TommyTran732/Linux-Setup-Scripts/main/etc/systemd/zram-generator.conf $staging/etc/systemd/zram-generator.conf
   
-  download https://raw.githubusercontent.com/nxn/QubesOS-Scripts/main/etc/X11/Xresources $staging/etc/systemd/zram-generator.conf
+  download https://raw.githubusercontent.com/nxn/QubesOS-Scripts/main/etc/X11/Xresources $staging/etc/X11/Xresources
   umask 077
 }
 
