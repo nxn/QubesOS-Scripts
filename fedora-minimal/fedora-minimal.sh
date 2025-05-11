@@ -47,7 +47,7 @@ stage_files() {
   download https://raw.githubusercontent.com/TommyTran732/Linux-Setup-Scripts/main/etc/ssh/ssh_config.d/10-custom.conf $staging/etc/ssh/ssh_config.d/10-custom.conf
 
   # Security kernel settings
-  download https://raw.githubusercontent.com/secureblue/secureblue/refs/heads/live/files/system/etc/modprobe.d/blacklist.conf $staging/etc/modprobe.d/workstation-blacklist.conf
+  download https://raw.githubusercontent.com/secureblue/secureblue/live/files/system/etc/modprobe.d/blacklist.conf $staging/etc/modprobe.d/workstation-blacklist.conf
   download https://raw.githubusercontent.com/TommyTran732/Linux-Setup-Scripts/main/etc/sysctl.d/99-workstation.conf $staging/etc/sysctl.d/99-workstation.conf
   
   # Setup ZRAM
