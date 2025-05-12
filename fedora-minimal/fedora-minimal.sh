@@ -81,7 +81,7 @@ deploy_files() {
 
 install_packages() {
   # Install necessary packages
-  sudo dnf install -y qubes-core-agent-selinux
+  sudo dnf install -y qubes-core-agent-selinux procps-ng
 
   # Setup hardened_malloc
   sudo https_proxy=https://127.0.0.1:8082 dnf copr enable secureblue/hardened_malloc -y
@@ -108,7 +108,7 @@ configure() {
 
   # Dracut doesn't seem to work - need to investigate
   # dracut -f
-  # sudo sysctl -p
+  sudo sysctl -p
 }
 
 case ${1-noop} in
