@@ -28,7 +28,7 @@ download() {
   unpriv curl -s --proxy http://127.0.0.1:8082 "${1}" | sudo tee "${2}" > /dev/null
 }
 
-stage_files() {
+stage() {
   # Clean previous files
   sudo rm -rf "./$staging"
 
@@ -57,7 +57,7 @@ stage_files() {
   umask 077
 }
 
-backup_files() {
+backup() {
   sudo rm -rf "./$staging-backup"
   sudo mkdir -p "./$staging-backup"
 
@@ -70,16 +70,7 @@ backup_files() {
   done
 }
 
-deploy_files() {
-  cd $staging
-  tar cf - * | sudo tar -C / -xf -
-  cd ..
-
-  # Make home directory private
-  chmod 700 /home/*
-}
-
-install_packages() {
+install() {
   # Install necessary packages
   sudo dnf install -y qubes-core-agent-selinux procps-ng
 
@@ -88,9 +79,15 @@ install_packages() {
   sudo dnf install -y hardened_malloc
 }
 
-#start_services() { }
+deploy() {
+  # Deploy configs/files
+  cd $staging
+  tar cf - * | sudo tar -C / -xf -
+  cd ..
 
-stop_services() {
+  # Make home directory private
+  chmod 700 /home/*
+
   # Compliance
   systemctl mask debug-shell.service
   systemctl mask kdump.service
@@ -98,15 +95,6 @@ stop_services() {
   # Disable timesyncd
   systemctl disable --now systemd-timesyncd
   systemctl mask systemd-timesyncd
-}
-
-run() {
-  install_packages
-  stage_files
-  backup_files
-  stop_services
-  deploy_files
-  #start_services
 
   # Dracut doesn't seem to work - need to investigate
   # dracut -f
@@ -115,23 +103,31 @@ run() {
 
 case ${1-noop} in
   run)
-    run
+    install
+    stage
+    backup
+    deploy
     echo "Complete"
     ;;
 
   install)
-    install_packages
+    install
     echo "Packages installed"
     ;;
 
   stage)
-    stage_files
+    stage
     echo "Files staged"
     ;;
 
   backup)
-    backup_files
+    backup
     echo "Files backed up"
+    ;;
+
+  deploy)
+    deploy
+    echo "Deployment complete"
     ;;
 
   *)

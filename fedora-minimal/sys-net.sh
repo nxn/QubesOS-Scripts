@@ -28,14 +28,14 @@ download() {
   unpriv curl -s --proxy http://127.0.0.1:8082 "${1}" | sudo tee "${2}" > /dev/null
 }
 
-stage_files() {
+stage() {
     # Clean previous files
   sudo rm -rf "./$staging"
 
   umask 022
 
   # Setup NTS
-  download https://raw.githubusercontent.com/GrapheneOS/infrastructure/main/chrony.conf $staging/etc/chrony.conf
+  download https://raw.githubusercontent.com/GrapheneOS/infrastructure/main/etc/chrony.conf $staging/etc/chrony.conf
   download https://raw.githubusercontent.com/TommyTran732/Linux-Setup-Scripts/main/etc/sysconfig/chronyd $staging/etc/sysconfig/chronyd
 
   # Theming
@@ -53,7 +53,7 @@ stage_files() {
   umask 077
 }
 
-install_packages() {
+install() {
   # Install necessary packages
   # sudo dnf install -y @hardware-support arc-theme chrony gnome-keyring fwupd-qubes-vm NetworkManager-wifi network-manager-applet qubes-core-agent-dom0-updates qubes-core-agent-networking qubes-core-agent-network-manager qubes-usb-proxy xfce4-notifyd
 
@@ -61,7 +61,7 @@ install_packages() {
 }
 
 
-backup_files() {
+backup() {
   sudo rm -rf "./$staging-backup"
   sudo mkdir -p "./$staging-backup"
 
@@ -74,17 +74,11 @@ backup_files() {
   done
 }
 
-deploy_files() {
+deploy() {
+  # Deploy configs/files
   cd $staging
   tar cf - * | sudo tar -C / -xf -
   cd ..
-}
-
-run() {
-  install_packages
-  stage_files
-  backup_files
-  deploy_files
 
   sudo hostnamectl hostname 'localhost'
   sudo hostnamectl --transient hostname ''
@@ -92,23 +86,31 @@ run() {
 
 case ${1-noop} in
   run)
-    run
+    install
+    stage
+    backup
+    deploy
     echo "Complete"
     ;;
 
   install)
-    install_packages
+    install
     echo "Packages installed"
     ;;
 
   stage)
-    stage_files
+    stage
     echo "Files staged"
     ;;
 
   backup)
-    backup_files
+    backup
     echo "Files backed up"
+    ;;
+
+  deploy)
+    deploy
+    echo "Deployment complete"
     ;;
 
   *)
