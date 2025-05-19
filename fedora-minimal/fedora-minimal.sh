@@ -51,7 +51,7 @@ stage_files() {
   download https://raw.githubusercontent.com/TommyTran732/Linux-Setup-Scripts/main/etc/sysctl.d/99-workstation.conf $staging/etc/sysctl.d/99-workstation.conf
   
   # Setup ZRAM
-  download https://raw.githubusercontent.com/TommyTran732/Linux-Setup-Scripts/main/etc/systemd/zram-generator.conf $staging/etc/systemd/zram-generator.conf
+  # download https://raw.githubusercontent.com/TommyTran732/Linux-Setup-Scripts/main/etc/systemd/zram-generator.conf $staging/etc/systemd/zram-generator.conf
   
   download https://raw.githubusercontent.com/nxn/QubesOS-Scripts/main/etc/X11/Xresources $staging/etc/X11/Xresources
   umask 077
@@ -100,8 +100,10 @@ stop_services() {
   systemctl mask systemd-timesyncd
 }
 
-configure() {
+run() {
   install_packages
+  stage_files
+  backup_files
   stop_services
   deploy_files
   #start_services
@@ -112,14 +114,19 @@ configure() {
 }
 
 case ${1-noop} in
-  configure)
-    configure
-    echo "Configuration complete"
+  run)
+    run
+    echo "Complete"
+    ;;
+
+  install)
+    install_packages
+    echo "Packages installed"
     ;;
 
   stage)
     stage_files
-    echo "Files staged; review before proceeding"
+    echo "Files staged"
     ;;
 
   backup)
@@ -128,7 +135,7 @@ case ${1-noop} in
     ;;
 
   *)
-    echo 'Specify operation. Run in following order: "stage", "backup", "configure"'
+    echo 'Specify operation: run, install, stage, backup'
     ;;
 
 esac
